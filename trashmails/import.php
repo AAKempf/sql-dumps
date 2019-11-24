@@ -17,6 +17,8 @@ $dbCharset = "utf8mb4";
 // Table with the domain names
 $dbTable = "trashmails";
 
+$whitelist = "hotmail.com";
+
 $fp = fopen(__DIR__ . '/domains.txt', 'rb');
 
 if ($fp) {
@@ -33,7 +35,10 @@ if ($fp) {
 
         $trashmail = str_replace(PHP_EOL, '', fgets($fp));
 
-        mysqli_query($conn, "insert into {$dbTable} (`trashmail`) values ('{$trashmail}')");
+        if (stripos($whitelist, $trashmail) !== false) {
+            mysqli_query($conn, "insert into {$dbTable} (`trashmail`) values ('{$trashmail}')");
+        }
+
     }
 
     mysqli_query($conn, "ALTER TABLE {$dbTable} ADD UNIQUE ( `trashmail`)");
